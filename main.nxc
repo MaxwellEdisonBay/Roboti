@@ -1,0 +1,22 @@
+void init ()
+{
+  SetSensorTouch(S1);
+}
+
+void run ()
+{
+  while (true) {
+    OnFwd(OUT_C, 75);
+    if (SensorValue(S1)>0)
+    {
+      Off(OUT_C);
+      break;
+    }
+  }
+}
+
+task main () {
+    init();
+    TextOut(10, 10, "ATOM TEST");
+    run();
+}
