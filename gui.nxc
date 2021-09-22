@@ -1,0 +1,50 @@
+string GUI_msg;
+int GUI_i = 0;
+
+void GUI_showGUI()
+{
+    GUI_i++;
+    if(GUI_i % 100 != 0)
+        return;
+    GUI_i = 0;
+    ResetScreen();
+    TextOut(4, 0, NumToStr(SENSOR_lightValue));
+
+    TextOut(0, 10, "Cal:");
+
+    TextOut(6*4, 10, NumToStr(min));
+
+    TextOut(6*8, 10, NumToStr(max));
+
+    TextOut(6*12, 10, NumToStr(desired));
+
+    TextOut(4, 20, NumToStr(dt));
+
+
+    TextOut(0, 40, "Btn:");
+    TextOut(6*5, 40, NumToStr(SENSOR_btnDown));
+    //TextOut(6*6, 40, NumToStr(SENSOR_btnUp));
+
+    TextOut(4, 50, GUI_msg);
+}
+
+void GUI_setMsg(string message)
+{
+    GUI_msg = message;
+}
+
+void GUI_showPopup(string msg)
+{
+    ResetScreen();
+    TextOut(20, 20, msg);
+}
+
+
+
+
+
+
+
+
+
+

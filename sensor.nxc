@@ -1,0 +1,25 @@
+
+float SENSOR_lightValue = 0.0;
+unsigned int SENSOR_btnPressed = 0;
+unsigned int SENSOR_btnDown = 0;
+unsigned int SENSOR_btnUp = 0;
+
+float SENSOR_light()
+{
+    SENSOR_lightValue = SensorValue(S1) / 100.0;
+    return SENSOR_lightValue;
+}
+
+unsigned int SENSOR_btn()
+{
+    SENSOR_btnUp = SensorValue(S2) == 0;
+    SENSOR_btnPressed = SENSOR_btnUp && SENSOR_btnDown;
+    SENSOR_btnDown = SensorValue(S2) == 1;
+    return SENSOR_btnDown;
+}
+
+void SENSOR_sense()
+{
+    SENSOR_light();
+    SENSOR_btn();
+}

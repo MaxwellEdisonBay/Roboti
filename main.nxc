@@ -1,17 +1,76 @@
+#include "global.nxc";
+#include "sensor.nxc";
+
+#include "gui.nxc";
+
+
 void init ()
 {
-  SetSensorTouch(S1);
+  SetSensorTouch(S2);
+  SetSensorLight(S1);
 }
+
+
+void calibrate()
+{
+  if(SENSOR_btnPressed && min == 0)
+  {
+    min = SENSOR_light();
+    GUI_setMsg("Calibrate light.");
+  }
+  else if(SENSOR_btnPressed && min != 0 && max == 0)
+  {
+    max = SENSOR_light();
+    desired = min + (max - min) / 2;
+    GUI_setMsg("Calibrated!");
+  }
+  else if(SENSOR_btnPressed && desired != 0)
+  {
+    calibrated = 1;
+  }
+}
+
+
+void followLine ()
+{
+
+  OnFwdSync(OUT_BC, (100 * SENSOR_lightValue), 0);
+
+}
+
 
 void run ()
 {
+  GUI_setMsg("Calibrate dark.");
+
   while (true) {
-    OnFwd(OUT_C, 75);
-    if (SensorValue(S1)>0)
-    {
-      Off(OUT_C);
-      break;
+    lastTick = CurrentTick();
+
+    SENSOR_sense();
+
+    if(calibrated) {
+      followLine();
+
+      if(SENSOR_btnPressed)
+      {
+        Off(OUT_BC);
+        break;
+      }
+    } else {
+      calibrate();
     }
+
+    if(SENSOR_btnPressed) {
+      GUI_showPopup("Pressed!");
+      Wait(600);
+    }
+
+    GUI_showGUI();
+
+    SENSOR_btnPressed = 0;
+
+    passedTicks = CurrentTick() - lastTick;
+    dt = passedTicks / 1000.0;
   }
 }
 
