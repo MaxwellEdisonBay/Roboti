@@ -34,7 +34,11 @@ void calibrate()
 void followLine ()
 {
 
-  OnFwdSync(OUT_BC, (100 * SENSOR_lightValue), 0);
+  error = (SENSOR_lightValue - desired) * 100;
+
+  int value = -error * 90;
+
+  OnFwdSync(OUT_BC, 50, value);
 
 }
 

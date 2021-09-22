@@ -1,31 +1,75 @@
 string GUI_msg;
 int GUI_i = 0;
 
+void GUI_showCalibrationInfo()
+{
+    TextOut(4, LCD_LINE3, NumToStr(SENSOR_lightValue));
+
+    TextOut(0, LCD_LINE4, "Cal:");
+
+    TextOut(6*4, LCD_LINE4, NumToStr(min));
+
+    TextOut(6*8, LCD_LINE4, NumToStr(max));
+
+    TextOut(6*12, LCD_LINE4, NumToStr(desired));
+
+    TextOut(4, LCD_LINE5, NumToStr(dt));
+
+    NumOut(4, LCD_LINE7, error);
+
+
+    TextOut(0, LCD_LINE6, "Btn:");
+    TextOut(6*5, LCD_LINE6, NumToStr(SENSOR_btnDown));
+    //TextOut(6*6, LCD_LINE6, NumToStr(SENSOR_btnUp));
+}
+
+
+void GUI_showGraphInfo()
+{
+    unsigned int offBot = 10;
+    unsigned int centerX = DISPLAY_WIDTH / 2;
+
+    // X line
+    LineOut(0, offBot, DISPLAY_WIDTH, offBot);
+
+    // Y line
+    LineOut(centerX, 0, centerX, offBot-2);
+
+    // Center X value
+    NumOut(centerX, 0, 0);
+
+    // Left X value
+    NumOut(0, 0, -100);
+
+    // Right X value
+    NumOut(DISPLAY_WIDTH-6*3, 0, 100);
+
+    // Draw expected path as line
+    unsigned int x = centerX + (error / 100 * DISPLAY_WIDTH);
+    unsigned int y = DISPLAY_HEIGHT - offBot*2;
+    LineOut(centerX, offBot, x, y);
+    NumOut(x, DISPLAY_HEIGHT-offBot*2, error);
+
+}
+
 void GUI_showGUI()
 {
     GUI_i++;
     if(GUI_i % 100 != 0)
         return;
     GUI_i = 0;
-    ResetScreen();
-    TextOut(4, 0, NumToStr(SENSOR_lightValue));
+    ClearScreen();
 
-    TextOut(0, 10, "Cal:");
+    TextOut(4, LCD_LINE1, GUI_msg);
 
-    TextOut(6*4, 10, NumToStr(min));
-
-    TextOut(6*8, 10, NumToStr(max));
-
-    TextOut(6*12, 10, NumToStr(desired));
-
-    TextOut(4, 20, NumToStr(dt));
-
-
-    TextOut(0, 40, "Btn:");
-    TextOut(6*5, 40, NumToStr(SENSOR_btnDown));
-    //TextOut(6*6, 40, NumToStr(SENSOR_btnUp));
-
-    TextOut(4, 50, GUI_msg);
+    /*if(calibrated)
+    {
+        GUI_showGraphInfo();
+    }
+    else
+    {*/
+        GUI_showCalibrationInfo();
+    //}
 }
 
 void GUI_setMsg(string message)
