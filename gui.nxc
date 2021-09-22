@@ -17,6 +17,9 @@ void GUI_showCalibrationInfo()
 
     NumOut(4, LCD_LINE7, error);
 
+    NumOut(4, LCD_LINE8, motorLeft);
+    NumOut(24, LCD_LINE8, motorRight);
+
 
     TextOut(0, LCD_LINE6, "Btn:");
     TextOut(6*5, LCD_LINE6, NumToStr(SENSOR_btnDown));

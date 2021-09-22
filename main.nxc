@@ -30,15 +30,47 @@ void calibrate()
   }
 }
 
+int MIN(int a, int b)
+{
+  if(a > b)
+    return b;
+  return a;
+}
+
+int MAX(int a, int b)
+{
+  if(a < b)
+    return b;
+  return a;
+}
+
+int LIMIT(int a, int b, int c)
+{
+  return MIN(MAX(a, b), c);
+}
+
 
 void followLine ()
 {
 
-  error = (SENSOR_lightValue - desired) * 100;
+  // -1.0 ... 1.0
+  error = (SENSOR_lightValue - desired);
 
-  int value = -error * 90;
+  // 1 Left / -1 Right side of line
+  int left = -1;
 
-  OnFwdSync(OUT_BC, 50, value);
+  int minPwd = 60;
+
+  int konst = 100 + minPwd;
+
+  motorLeft = minPwd - error * konst * left;
+  motorRight = minPwd + error * konst * left;
+
+  // Right motor 0 ... 100 (Turn left)
+  OnFwd(OUT_B, LIMIT(motorRight, 0, 100));
+
+  // Left motor 0 ... 100 (Turn right)
+  OnFwd(OUT_C, LIMIT(motorLeft, 0, 100));
 
 }
 
@@ -46,6 +78,7 @@ void followLine ()
 void run ()
 {
   GUI_setMsg("Calibrate dark.");
+  //calibrated = 1;
 
   while (true) {
     lastTick = CurrentTick();

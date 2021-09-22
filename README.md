@@ -9,10 +9,11 @@
 
 [x] Light sensor Calibration
 [ ] Calibrate left or right side of line
-[ ] Process sensor output
-[ ] Calculate error
-[ ] Calculate distributed motor speed
+[X] Process sensor output
+[X] Calculate error
+[X] Calculate distributed motor speed
 [ ] Non saggy construction
 [ ] Too much error situation
+[ ] Integration and Derivation
 [ ] Finish and Test
 
