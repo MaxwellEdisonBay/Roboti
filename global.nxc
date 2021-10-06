@@ -8,6 +8,7 @@ float desired = 0;
 unsigned int calibrated = 0;
 
 float error = 0;
+float previous_error = 0;
 int motorLeft = 0;
 int motorRight = 0;
 
@@ -18,3 +19,4 @@ int counter = 0;
 
 float proportional = 0;
 float integral = 0;
+float derivative = 0;

@@ -59,18 +59,23 @@ int LIMIT(int a, int b, int c)
 
 void followLine_Copy_Paste(){
   error = (SENSOR_lightValue - desired);
+
   proportional = error;
   int minPwd = 0;
-  integral = integral + error * passedTicks/1000;
 
-  minPwd = 60;
+  integral += error * passedTicks/1000;
+  derivative = (error - previous_error) * passedTicks/1000;
+
+  minPwd = 54;
 
   float kp = 160;
-  float ki = 0.005;
-  /* float ki = 0; */
-  motorLeft = minPwd - kp*proportional - ki*integral;
-  motorRight = minPwd + kp*proportional + ki*integral;
+  float ki = 15;
+  float kd = 100;
 
+  motorLeft = minPwd - kp*proportional - ki*integral - kd*derivative;
+  motorRight = minPwd + kp*proportional + ki*integral + kd*derivative;
+
+  previous_error = error;
   // Right motor 0 ... 100 (Turn left)
   OnFwd(OUT_B, LIMIT(motorRight, 0, 100));
 
@@ -124,6 +129,7 @@ void run ()
       if(SENSOR_btnPressed)
       {
         Off(OUT_BC);
+        Wait(4000);
         break;
       }
     } else {
@@ -140,6 +146,7 @@ void run ()
     SENSOR_btnPressed = 0;
 
     passedTicks = CurrentTick() - lastTick;
+    lastTick = CurrentTick();
     /* dt = passedTicks / 1000.0; */
     /* if (passedTicks > std_time){
       float multiplierConst = 0.3;
