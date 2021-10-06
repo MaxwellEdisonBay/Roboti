@@ -21,7 +21,7 @@ void calibrate()
   else if(SENSOR_btnPressed && min != 0 && max == 0)
   {
     max = SENSOR_light();
-    desired = min + (max - min) / 2;
+    desired = (min + max) / 2.0;
     GUI_setMsg("Calibrated!");
 
   }
@@ -68,9 +68,9 @@ void followLine_Copy_Paste(){
 
   minPwd = 54;
 
-  float kp = 160;
+  float kp = 161;
   float ki = 15;
-  float kd = 100;
+  float kd = 250;
 
   motorLeft = minPwd - kp*proportional - ki*integral - kd*derivative;
   motorRight = minPwd + kp*proportional + ki*integral + kd*derivative;
@@ -114,9 +114,14 @@ void run ()
   GUI_setMsg("Calibrate dark.");
   //calibrated = 1;
   // ====================== TEST
-  /* calibrated = 1;
-  desired = 0.5;
-  Wait(15000); */
+  calibrated = 1;
+  desired = 0.375;
+  while(true) {
+    SENSOR_sense();
+    if(SENSOR_btnPressed)
+      break;
+    Wait(15);
+  }
   // ====================== TEST
   lastTick = CurrentTick();
   while (true) {
