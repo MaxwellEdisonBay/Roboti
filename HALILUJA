@@ -1,0 +1,2 @@
+int minPwd = 60;
+float kp = 160;

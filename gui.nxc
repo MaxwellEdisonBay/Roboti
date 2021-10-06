@@ -85,13 +85,3 @@ void GUI_showPopup(string msg)
     ResetScreen();
     TextOut(20, 20, msg);
 }
-
-
-
-
-
-
-
-
-
-

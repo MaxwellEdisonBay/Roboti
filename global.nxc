@@ -10,3 +10,11 @@ unsigned int calibrated = 0;
 float error = 0;
 int motorLeft = 0;
 int motorRight = 0;
+
+float der_coeff = 1;
+float last_error = 0;
+int std_time = 3;
+int counter = 0;
+
+float proportional = 0;
+float integral = 0;

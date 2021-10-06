@@ -23,10 +23,17 @@ void calibrate()
     max = SENSOR_light();
     desired = min + (max - min) / 2;
     GUI_setMsg("Calibrated!");
+
   }
   else if(SENSOR_btnPressed && desired != 0)
   {
     calibrated = 1;
+    /* OnFwd(OUT_B, 100);
+
+    // Left motor 0 ... 100 (Turn right)
+    OnFwd(OUT_C, 100);
+    Wait(500); */
+
   }
 }
 
@@ -50,6 +57,29 @@ int LIMIT(int a, int b, int c)
 }
 
 
+void followLine_Copy_Paste(){
+  error = (SENSOR_lightValue - desired);
+  proportional = error;
+  int minPwd = 0;
+  integral = integral + error * passedTicks/1000;
+
+  minPwd = 60;
+
+  float kp = 160;
+  float ki = 0.005;
+  /* float ki = 0; */
+  motorLeft = minPwd - kp*proportional - ki*integral;
+  motorRight = minPwd + kp*proportional + ki*integral;
+
+  // Right motor 0 ... 100 (Turn left)
+  OnFwd(OUT_B, LIMIT(motorRight, 0, 100));
+
+  // Left motor 0 ... 100 (Turn right)
+  OnFwd(OUT_C, LIMIT(motorLeft, 0, 100));
+  Wait(std_time);
+}
+
+
 void followLine ()
 {
 
@@ -57,14 +87,13 @@ void followLine ()
   error = (SENSOR_lightValue - desired);
 
   // 1 Left / -1 Right side of line
-  int left = -1;
+  int direction = -1;
 
-  int minPwd = 60;
-
+  int minPwd = 63;
   int konst = 100 + minPwd;
 
-  motorLeft = minPwd - error * konst * left;
-  motorRight = minPwd + error * konst * left;
+  motorLeft = minPwd - error * konst * direction*der_coeff;
+  motorRight = minPwd + error * konst * direction*der_coeff;
 
   // Right motor 0 ... 100 (Turn left)
   OnFwd(OUT_B, LIMIT(motorRight, 0, 100));
@@ -79,15 +108,19 @@ void run ()
 {
   GUI_setMsg("Calibrate dark.");
   //calibrated = 1;
-
+  // ====================== TEST
+  /* calibrated = 1;
+  desired = 0.5;
+  Wait(15000); */
+  // ====================== TEST
+  lastTick = CurrentTick();
   while (true) {
-    lastTick = CurrentTick();
 
     SENSOR_sense();
 
     if(calibrated) {
-      followLine();
-
+      /* followLine(); */
+      followLine_Copy_Paste();
       if(SENSOR_btnPressed)
       {
         Off(OUT_BC);
@@ -107,7 +140,18 @@ void run ()
     SENSOR_btnPressed = 0;
 
     passedTicks = CurrentTick() - lastTick;
-    dt = passedTicks / 1000.0;
+    /* dt = passedTicks / 1000.0; */
+    /* if (passedTicks > std_time){
+      float multiplierConst = 0.3;
+      if (counter == 0){
+        last_error = error;
+        counter ++;
+      }
+      der_coeff = 1 + abs((last_error - error))/passedTicks*multiplierConst;
+
+      lastTick = CurrentTick();
+      last_error = error;
+    } */
   }
 }
 
