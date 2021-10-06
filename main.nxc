@@ -66,11 +66,11 @@ void followLine_Copy_Paste(){
   integral += error * passedTicks/1000;
   derivative = (error - previous_error) * passedTicks/1000;
 
-  minPwd = 54;
+  minPwd = 54 + 2;
 
-  float kp = 161;
-  float ki = 15;
-  float kd = 250;
+  float kp = 160 - 15;
+  float ki = 0;
+  float kd = 300 + 20;
 
   motorLeft = minPwd - kp*proportional - ki*integral - kd*derivative;
   motorRight = minPwd + kp*proportional + ki*integral + kd*derivative;
@@ -115,7 +115,7 @@ void run ()
   //calibrated = 1;
   // ====================== TEST
   calibrated = 1;
-  desired = 0.375;
+  desired = 0.38;
   while(true) {
     SENSOR_sense();
     if(SENSOR_btnPressed)
