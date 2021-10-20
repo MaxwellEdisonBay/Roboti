@@ -68,9 +68,9 @@ void followLine_Copy_Paste(){
 
   minPwd = 54 + 2;
 
-  float kp = 160 - 15;
-  float ki = 0;
-  float kd = 300 + 20;
+  float kp = 160 - 0;
+  float ki = 5;
+  float kd = 300 + 80;
 
   motorLeft = minPwd - kp*proportional - ki*integral - kd*derivative;
   motorRight = minPwd + kp*proportional + ki*integral + kd*derivative;
@@ -114,14 +114,14 @@ void run ()
   GUI_setMsg("Calibrate dark.");
   //calibrated = 1;
   // ====================== TEST
-  calibrated = 1;
+  /*calibrated = 1;
   desired = 0.38;
   while(true) {
     SENSOR_sense();
     if(SENSOR_btnPressed)
       break;
     Wait(15);
-  }
+  }*/
   // ====================== TEST
   lastTick = CurrentTick();
   while (true) {
