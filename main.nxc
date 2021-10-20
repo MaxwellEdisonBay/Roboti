@@ -8,6 +8,7 @@ void init ()
 {
   SetSensorTouch(S2);
   SetSensorLight(S1);
+  SetSensorUltrasonic(S4);
 }
 
 
@@ -66,11 +67,23 @@ void followLine_Copy_Paste(){
   integral += error * passedTicks/1000;
   derivative = (error - previous_error) * passedTicks/1000;
 
-  minPwd = 54 + 2;
+  //const int add = 1;
+  minPwd = 60;
 
-  float kp = 160 - 0;
-  float ki = 5;
-  float kd = 300 + 80;
+  const float Pc = 2.0; // period
+
+  const float Kc = 175;
+
+  float kp = 0.81 * Kc;
+  float ki = 0;//2.0 * kp / 1000 / Pc;
+  float kd = 5.0 * kp * Pc / (8 / 1000);
+
+
+  const float limit = 0.1;
+  if(integral > limit)
+    integral = limit;
+  else if(integral < -limit)
+    integral = -limit;
 
   motorLeft = minPwd - kp*proportional - ki*integral - kd*derivative;
   motorRight = minPwd + kp*proportional + ki*integral + kd*derivative;
@@ -85,48 +98,32 @@ void followLine_Copy_Paste(){
 }
 
 
-void followLine ()
-{
-
-  // -1.0 ... 1.0
-  error = (SENSOR_lightValue - desired);
-
-  // 1 Left / -1 Right side of line
-  int direction = -1;
-
-  int minPwd = 63;
-  int konst = 100 + minPwd;
-
-  motorLeft = minPwd - error * konst * direction*der_coeff;
-  motorRight = minPwd + error * konst * direction*der_coeff;
-
-  // Right motor 0 ... 100 (Turn left)
-  OnFwd(OUT_B, LIMIT(motorRight, 0, 100));
-
-  // Left motor 0 ... 100 (Turn right)
-  OnFwd(OUT_C, LIMIT(motorLeft, 0, 100));
-
-}
-
-
 void run ()
 {
+  unsigned int www = 0;
+
   GUI_setMsg("Calibrate dark.");
   //calibrated = 1;
   // ====================== TEST
   /*calibrated = 1;
-  desired = 0.38;
-  while(true) {
-    SENSOR_sense();
-    if(SENSOR_btnPressed)
-      break;
-    Wait(15);
+  desired = 0.39;
+  while(!SENSOR_btnPressed) {
+    SENSOR_btn();
+    Wait(1);
   }*/
   // ====================== TEST
   lastTick = CurrentTick();
+  SENSOR_ultra();
+
   while (true) {
 
     SENSOR_sense();
+
+    /*www += 1;
+    if(www > 150) {
+      SENSOR_ultra();
+      www = 0;
+    }*/
 
     if(calibrated) {
       /* followLine(); */

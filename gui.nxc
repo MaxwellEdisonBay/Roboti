@@ -5,7 +5,7 @@ void GUI_showCalibrationInfo()
 {
     NumOut(4, LCD_LINE2, integral);
 
-    TextOut(4, LCD_LINE3, NumToStr(SENSOR_lightValue));
+    TextOut(4, LCD_LINE3, NumToStr(SENSOR_ultrasound));
 
     TextOut(0, LCD_LINE4, "Cal:");
 

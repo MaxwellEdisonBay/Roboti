@@ -1,5 +1,6 @@
 
 float SENSOR_lightValue = 0.0;
+unsigned int SENSOR_ultrasound = 0; // in cm
 unsigned int SENSOR_btnPressed = 0;
 unsigned int SENSOR_btnDown = 0;
 unsigned int SENSOR_btnUp = 0;
@@ -16,6 +17,12 @@ unsigned int SENSOR_btn()
     SENSOR_btnPressed = SENSOR_btnUp && SENSOR_btnDown;
     SENSOR_btnDown = SensorValue(S2) == 1;
     return SENSOR_btnDown;
+}
+
+unsigned int SENSOR_ultra()
+{
+    SENSOR_ultrasound = SensorUS(S4);
+    return SENSOR_ultrasound;
 }
 
 void SENSOR_sense()
