@@ -93,7 +93,7 @@ void senseDanger(){
       Wait(1000);
 
       float error = (SENSOR_lightValue - desired);
-      OnFwdSync(OUT_BC, 40, 0);
+      OnFwdSync(OUT_BC, 30, 0);
 
       do{
         SENSOR_sense();
@@ -119,17 +119,17 @@ void followLine_Copy_Paste(){
   derivative = (error - previous_error) * passedTicks/1000;
 
   //const int add = 1;
-  minPwd = 70; // 70
+  minPwd = 80; // 70
 
   const float Pc = 3.0; // 3.0 period
 
-  const float Kc = 155; // 155
+  const float Kc = 180; // 155
 
   float kp = 0.85 * Kc; // 0.85 * Kc
 
-  float ki = 1.0 * kp / 1000 / Pc; // 2.0 * kp / 1000
+  float ki = 0.05 * kp / 1000 / Pc; // 2.0 * kp / 1000
 
-  float kd = 11 * kp * Pc / (8 / 1000); // 10.0 * kp * Pc / (8 / 1000)
+  float kd = 13.8 * kp * Pc / (8 / 1000); // 10.0 * kp * Pc / (8 / 1000)
 
     /* float kp = 1403
     float ki = 0;//2.0 * kp / 1000 / Pc;
@@ -161,6 +161,7 @@ void run ()
   GUI_setMsg("Calibrate dark.");
   calibrated = 1;
   desired = 0.37;
+  evaded = 1;
   // ====================== TEST
   /*calibrated = 1;
   desired = 0.39;
@@ -185,7 +186,7 @@ void run ()
     if(calibrated) {
       /* followLine(); */
       followLine_Copy_Paste();
-      senseDanger();
+      //senseDanger();
       if(stop_now())
       {
         break;
