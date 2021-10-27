@@ -7,6 +7,8 @@ float max = 0;
 float desired = 0;
 unsigned int calibrated = 0;
 
+unsigned int evaded = 0;
+
 float error = 0;
 float previous_error = 0;
 int motorLeft = 0;

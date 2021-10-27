@@ -11,6 +11,17 @@ void init ()
   SetSensorUltrasonic(S4);
 }
 
+bool stop_now() {
+  SENSOR_sense();
+  if(SENSOR_btnPressed)
+  {
+    Off(OUT_BC);
+    Wait(4000);
+    return true;
+  }
+  return false;
+}
+
 
 void calibrate()
 {
@@ -23,6 +34,7 @@ void calibrate()
   {
     max = SENSOR_light();
     desired = (min + max) / 2.0;
+    desired = 0.37;
     GUI_setMsg("Calibrated!");
 
   }
@@ -57,9 +69,48 @@ int LIMIT(int a, int b, int c)
   return MIN(MAX(a, b), c);
 }
 
+void senseDanger(){
+
+  if(SENSOR_ultrasound < 26)
+  {
+      // left, right motor
+      OnFwdSync(OUT_BC, 0, 0);
+
+      Wait(50);
+
+      OnFwd(OUT_C, 0);
+      OnFwd(OUT_B, 40);
+
+      Wait(500);
+
+      OnFwdSync(OUT_BC, 50, 0);
+
+      Wait(800);
+
+      OnFwd(OUT_C, 40);
+      OnFwd(OUT_B, 0);
+
+      Wait(1000);
+
+      float error = (SENSOR_lightValue - desired);
+      OnFwdSync(OUT_BC, 40, 0);
+
+      do{
+        SENSOR_sense();
+        error = (SENSOR_lightValue - desired);
+
+        stop_now();
+      }while(error > 0.08 || error < -0.08);
+
+      evaded = 1;
+      SENSOR_ultra();
+
+  }
+
+}
 
 void followLine_Copy_Paste(){
-  error = (SENSOR_lightValue - desired);
+  error = (SENSOR_lightValue - desired); // -1 ... 1
 
   proportional = error;
   int minPwd = 0;
@@ -68,18 +119,24 @@ void followLine_Copy_Paste(){
   derivative = (error - previous_error) * passedTicks/1000;
 
   //const int add = 1;
-  minPwd = 60;
+  minPwd = 70; // 70
 
-  const float Pc = 2.0; // period
+  const float Pc = 3.0; // 3.0 period
 
-  const float Kc = 175;
+  const float Kc = 155; // 155
 
-  float kp = 0.81 * Kc;
-  float ki = 0;//2.0 * kp / 1000 / Pc;
-  float kd = 5.0 * kp * Pc / (8 / 1000);
+  float kp = 0.85 * Kc; // 0.85 * Kc
+
+  float ki = 1.0 * kp / 1000 / Pc; // 2.0 * kp / 1000
+
+  float kd = 11 * kp * Pc / (8 / 1000); // 10.0 * kp * Pc / (8 / 1000)
+
+    /* float kp = 1403
+    float ki = 0;//2.0 * kp / 1000 / Pc;
+    float kd = 0; */
 
 
-  const float limit = 0.1;
+  const float limit = 0.01; // 0.01
   if(integral > limit)
     integral = limit;
   else if(integral < -limit)
@@ -90,20 +147,20 @@ void followLine_Copy_Paste(){
 
   previous_error = error;
   // Right motor 0 ... 100 (Turn left)
-  OnFwd(OUT_B, LIMIT(motorRight, 0, 100));
+  OnFwd(OUT_B, LIMIT(motorRight, -100, 100));
 
   // Left motor 0 ... 100 (Turn right)
-  OnFwd(OUT_C, LIMIT(motorLeft, 0, 100));
+  OnFwd(OUT_C, LIMIT(motorLeft, -100, 100));
   Wait(std_time);
 }
-
 
 void run ()
 {
   unsigned int www = 0;
 
   GUI_setMsg("Calibrate dark.");
-  //calibrated = 1;
+  calibrated = 1;
+  desired = 0.37;
   // ====================== TEST
   /*calibrated = 1;
   desired = 0.39;
@@ -119,19 +176,18 @@ void run ()
 
     SENSOR_sense();
 
-    /*www += 1;
-    if(www > 150) {
+    www += 1;
+    if(www > 45 + evaded * 155) {
       SENSOR_ultra();
       www = 0;
-    }*/
+    }
 
     if(calibrated) {
       /* followLine(); */
       followLine_Copy_Paste();
-      if(SENSOR_btnPressed)
+      senseDanger();
+      if(stop_now())
       {
-        Off(OUT_BC);
-        Wait(4000);
         break;
       }
     } else {
