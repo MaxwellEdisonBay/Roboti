@@ -15,7 +15,7 @@ void GUI_showCalibrationInfo()
 
     TextOut(6*12, LCD_LINE4, NumToStr(desired));
 
-    TextOut(4, LCD_LINE5, NumToStr(dt));
+    TextOut(4, LCD_LINE5, NumToStr(SENSOR_lightValue));
 
     NumOut(4, LCD_LINE7, error);
 

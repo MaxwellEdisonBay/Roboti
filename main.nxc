@@ -109,7 +109,71 @@ void senseDanger(){
 
 }
 
-void followLine_Copy_Paste(){
+bool sumo()
+{
+  Wait(5000);
+
+  OnFwdSync(OUT_BC, 40, 100);
+  Wait(300);
+  int i = 1;
+  int a = 0;
+  int d = 0;
+
+  do {
+
+  OnFwdSync(OUT_BC, 30, i*100);
+
+  float change = 0;
+
+  d = 0;
+  do{
+    float newSensorValue = SensorUS(S4);
+    change = SENSOR_ultrasound - newSensorValue;
+    SENSOR_ultrasound = newSensorValue;
+    d += 1;
+    if(d > 3000){
+      d = 0;
+      a += 1;
+      break;
+    } else {
+      a = 0;
+    }
+
+    Wait(5);
+  }while(SENSOR_ultrasound > 70 || change > -1.5);
+
+  OnFwdSync(OUT_BC, 25, -i*100);
+  Wait(100);
+
+  //Wait(1250); // 180deg
+
+  float error = (SENSOR_lightValue - desired);
+  OnFwdSync(OUT_BC, 60, 0);
+  Wait(200);
+
+  do{
+    SENSOR_sense();
+
+    stop_now();
+  }while(SENSOR_lightValue > 0.3);
+
+  OnFwdSync(OUT_BC, -80, 0);
+  Wait(400);
+
+
+  OnFwdSync(OUT_BC, -40, 0);
+  Wait(500);
+
+  i = -1 * i;
+  a += 1;
+
+  }while(a <= 2);
+
+  return true;
+
+}
+
+void followLine(){
   error = (SENSOR_lightValue - desired); // -1 ... 1
 
   proportional = error;
@@ -184,9 +248,20 @@ void run ()
     }
 
     if(calibrated) {
-      /* followLine(); */
-      followLine_Copy_Paste();
-      //senseDanger();
+      /*
+      Uloha 1. a 2.:
+      followLine();
+      senseDanger();
+      */
+
+      /*
+      Uloha 3.:
+      */
+      if(sumo())
+      {
+        break;
+      }
+
       if(stop_now())
       {
         break;
